@@ -1,0 +1,20 @@
+# OS generated
+.DS_Store
+.thumbs.db
+
+# Dependencies (if we had node_modules, but we use libs folder)
+node_modules/
+npm-debug.log
+
+# Build output
+dist/
+build/
+*.zip
+
+# Keys and Secrets (CRITICAL)
+secrets.js
+.env
+
+# Editor files
+.vscode/
+.idea/

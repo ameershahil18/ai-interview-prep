@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Prep</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="ai-overlay" id="ai-overlay-panel">
+
+        <!-- Main Content -->
+        <div class="overlay-content">
+            <header class="overlay-header">
+                <h3>ATS Resume Optimizer</h3>
+                <div class="header-actions">
+                    <button id="ai-config-btn" class="icon-btn" title="Configure AI">🔑</button> <!-- Changed to Key -->
+                    <button id="theme-toggle" class="icon-btn" title="Toggle Theme">🌙</button>
+                </div>
+            </header>
+
+            <!-- AI CONFIG MODAL (Overlay) -->
+            <div id="ai-config-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h3 style="margin:0; font-size:16px;">AI Configuration</h3>
+                        <button id="close-modal-btn" class="text-btn" style="font-size:16px;">✕</button>
+                    </div>
+
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:15px;">
+                        Add your key to unlock Interview Questions & Summaries.
+                    </p>
+
+                    <div class="form-group">
+                        <label>Provider</label>
+                        <select id="ai-provider-select">
+                            <option value="gemini">Google Gemini (Free Tier)</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="ollama">Ollama (Local)</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom Fields -->
+                    <div id="custom-ai-fields" class="hidden">
+                        <div class="form-group">
+                            <input type="text" id="custom-base-url"
+                                placeholder="Base URL (e.g. https://api.openai.com/v1)">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="custom-model-name" placeholder="Model Name (e.g. gpt-4o)">
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="api-key-group">
+                        <label>API Key</label>
+                        <input type="password" id="api-key-input" placeholder="Paste API Key here..."
+                            autocomplete="off">
+                    </div>
+
+                    <!-- Hints Area (Always Visible based on logic) -->
+                    <div id="gemini-hint" class="hint-text hidden_hint" style="margin-bottom:15px; display:none;">
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank">Get Free Gemini Key 🔗</a>
+                    </div>
+                    <div id="openai-hint" class="hint-text hidden_hint" style="margin-bottom:15px; display:none;">
+                        <a href="https://platform.openai.com/api-keys" target="_blank">Get OpenAI Key 🔗</a>
+                    </div>
+                    <div id="ollama-hint" class="hint-text hidden_hint" style="margin-bottom:15px; display:none;">
+                        <p>1. <a href="https://ollama.com/download" target="_blank">Download Ollama</a></p>
+                        <p>2. Run: <code>ollama run llama3</code></p>
+                    </div>
+
+                    <button id="save-config-btn" class="primary-btn full-width">Save & Close</button>
+                </div>
+            </div>
+
+            <!-- MAIN INPUT VIEW -->
+            <div id="input-view" class="view" style="padding-bottom: 0;">
+                <!-- 1. RESUME INPUT -->
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>1. Upload Resume (PDF/DOCX/TXT)</label>
+                    <input type="file" id="resume-file-input" accept=".txt,.md,.pdf,.docx">
+                    <div id="resume-status" class="hint-text" style="color:green; display:none;">Resume Text Loaded ✓
+                    </div>
+                    <textarea id="resume-input" class="hidden"></textarea> <!-- Hidden store for text -->
+                </div>
+
+                <!-- 2. JOB DESCRIPTION INPUT -->
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>2. Job Description</label>
+                    <textarea id="manual-job-input"
+                        placeholder="Paste the Job Description here to check your match score..."
+                        style="height: 120px;"></textarea>
+                </div>
+
+                <!-- ANALYZE BUTTON -->
+                <button id="analyze-btn" class="primary-btn full-width">Analyze Match Score</button>
+            </div>
+
+            <!-- RESULTS AREA -->
+            <div id="results-area" class="view hidden" style="padding-top: 0;">
+
+                <!-- TABS (Shown if AI is enabled) -->
+                <div id="ai-tabs" class="tabs hidden" style="margin-bottom:12px;">
+                    <button class="tab-btn active" data-tab="ats">ATS Score</button>
+                    <button class="tab-btn" data-tab="summary">Summary</button>
+                    <button class="tab-btn" data-tab="questions">Questions</button>
+                    <button class="tab-btn" data-tab="star">STAR</button>
+                </div>
+
+                <!-- TAB CONTENT: ATS (Default) -->
+                <div id="tab-ats" class="tab-pane active">
+                    <div class="qa-card" style="text-align:center; border:2px solid var(--primary-color);">
+                        <div class="section-title" style="font-size:16px;">ATS Match Score</div>
+                        <div id="score-display" style="font-size:36px; font-weight:800; color:var(--primary-color);">--%
+                        </div>
+                    </div>
+
+                    <div class="qa-card">
+                        <div class="section-title">Missing Skills</div>
+                        <ul id="missing-skills-list" style="padding-left:20px; margin:0; color:#ef4444;"></ul>
+                    </div>
+
+                    <div class="qa-card">
+                        <div class="section-title">Improvement Suggestions</div>
+                        <ul id="suggestions-list" style="padding-left:20px; margin:0;"></ul>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: AI Results -->
+                <div id="tab-summary" class="tab-pane"></div>
+                <div id="tab-questions" class="tab-pane"></div>
+                <div id="tab-star" class="tab-pane"></div>
+
+                <button id="reset-btn" class="secondary-btn full-width" style="margin-top:10px;">Check Another
+                    Job</button>
+            </div>
+
+        </div>
+    </div>
+    <script src="utils.js"></script>
+    <script src="ai_service.js"></script> <!-- Restored -->
+    <script src="ats_service.js"></script>
+    <script src="libs/pdf.min.js"></script>
+    <script src="libs/mammoth.browser.min.js"></script>
+    <script src="popup.js"></script>
+</body>
+
+</html>
