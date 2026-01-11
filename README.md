@@ -2,9 +2,6 @@
 
 **A Chrome Extension to optimize your resume for ATS visibility and generate real-time AI interview questions based on job descriptions.**
 
-![App Screenshot](screenshots/demo.png)
-*(Place your screenshot in the `screenshots` folder and name it `demo.png`)*
-
 ## ✨ Features
 
 *   **📄 Offline ATS Match Score**: Instantly analyzes your resume against any job description to calculate a match score. completely private & offline.
