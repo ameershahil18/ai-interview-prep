@@ -22,7 +22,7 @@
 
 1.  **Clone this repository**:
     ```bash
-    git clone https://github.com/YOUR_USERNAME/ai-interview-prep-extension.git
+    git clone https://github.com/ameershahil18/ai-interview-prep.git
     ```
 2.  Open **Chrome** and navigate to `chrome://extensions/`.
 3.  Toggle **Developer mode** (top right corner).
